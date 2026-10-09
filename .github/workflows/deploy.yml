@@ -1,0 +1,21 @@
+name: Despliegue Continuo Homelab
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Descargar cambios del repositorio
+        uses: actions/checkout@v4
+
+      - name: Actualizar archivos en el servidor web Nginx
+        run: |
+          mkdir -p /var/www/henry-portfolio
+          rsync -av --exclude='.git' ./ /var/www/henry-portfolio/
+          ln -sf /var/www/henry-portfolio/Index.html /var/www/henry-portfolio/index.html || true
+          ln -sf /var/www/henry-portfolio/CV_Henry_Perez.pdf /var/www/henry-portfolio/cv.pdf || true
+          chown -R www-data:www-data /var/www/henry-portfolio
+          chmod -R 755 /var/www/henry-portfolio
