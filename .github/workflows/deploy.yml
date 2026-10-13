@@ -3,6 +3,7 @@ name: Despliegue Continuo Homelab
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -14,7 +15,9 @@ jobs:
       - name: Desplegar portafolio con Docker
         run: |
           set -e
-          cp -a "$GITHUB_WORKSPACE"/. /opt/portfolio-henry/
-          cd /opt/portfolio-henry
-          docker compose up -d --build
+          docker rm -f henry-portfolio portfolio-henry 2>/dev/null || true
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
+          sleep 2
           docker compose ps
+          curl -fsS http://localhost | grep -i "<title>"
