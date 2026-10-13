@@ -1,0 +1,10 @@
+name: portfolio
+services:
+  portfolio:
+    build: .
+    container_name: henry-portfolio
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:80"
+      - "8081:80"
