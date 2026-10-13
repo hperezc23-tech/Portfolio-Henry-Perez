@@ -1,0 +1,22 @@
+name: Deploy Homelab
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, homelab]
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Construir y levantar el contenedor
+        run: docker compose up -d --build --remove-orphans
+
+      - name: Limpiar imágenes viejas
+        run: docker image prune -f
+
+      - name: Verificar que el CV responde
+        run: curl -fsS http://localhost | grep -i "<title>"
